@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('feedback', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('image');
-            $table->string('comment');
+            $table->string('name')->nullable();
+            $table->string('image')->nullable();
+            $table->string('comment')->nullable();
             $table->timestamps();
         });
     }

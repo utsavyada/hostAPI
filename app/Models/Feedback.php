@@ -10,4 +10,5 @@ class Feedback extends Model
     use HasFactory;
     protected $primaryKey = 'id'; 
     protected $table = 'feedback'; 
+    protected $fillable = ['name', 'image', 'comment'];
 }

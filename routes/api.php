@@ -7,4 +7,5 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::post('/image/upload',[FeedbackController::class,'imageUpload']);
+Route::post('/feedback',[FeedbackController::class,'feedback']);
+Route::get('/feedback/all',[FeedbackController::class,'show']);
