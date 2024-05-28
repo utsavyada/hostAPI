@@ -9,3 +9,5 @@ Route::get('/user', function (Request $request) {
 
 Route::post('/feedback',[FeedbackController::class,'feedback']);
 Route::get('/feedback/all',[FeedbackController::class,'show']);
+Route::post('/product',[FeedbackController::class,'saveProduct']);
+Route::get('/product/all',[FeedbackController::class,'showProduct']);

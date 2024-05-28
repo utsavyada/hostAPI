@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Feedback;
+use App\Models\Product;
 
 class FeedbackController extends Controller
 {
@@ -37,7 +38,7 @@ class FeedbackController extends Controller
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $name = time() . '.' . $image->getClientOriginalName();
-            $filepath = $name;
+            $filepath = 'comment/' . $name;
             Storage::disk('s3')->put($filepath, file_get_contents($image));
             $url = Storage::disk('s3')->url($filepath);
         }
@@ -63,6 +64,57 @@ class FeedbackController extends Controller
         return response()->json([
             'data' => $feedbacks,
             'message' => 'Feedback records retrieved successfully',
+            'status' => true,
+        ], 200);
+    }
+
+    public function saveProduct(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'bail|required|regex:/^[A-Za-z\s]+$/',
+            'image' => 'bail|required|image',
+            'description' => 'bail|required|string',
+            'price' => 'bail|required|numeric'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'data' => '',
+                'message' => $validator->errors(),
+                'status' => false,
+            ], 400);
+        }
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $name = time() . '.' . $image->getClientOriginalName();
+            $filepath = 'product/' . $name;
+            Storage::disk('s3')->put($filepath, file_get_contents($image));
+            $url = Storage::disk('s3')->url($filepath);
+
+            $product = new Product();
+            $product->name = $request->name;
+            $product->image = $url;
+            $product->description = $request->description;
+            $product->price = $request->price;
+            $product->save();
+            return response()->json(['data' => '', 'message' => 'product detail save successfully', 'status' => true], 200);
+        }
+    }
+
+    public function showProduct(Request $request)
+    {
+        $products = Product::select('id', 'name', 'image', 'description', 'price')->get();
+        if ($products->isEmpty()) {
+            return response()->json([
+                'data' => '',
+                'message' => 'No product found',
+                'status' => false,
+            ], 404);
+        }
+        return response()->json([
+            'data' => $products,
+            'message' => 'Product retrieved successfully',
             'status' => true,
         ], 200);
     }
