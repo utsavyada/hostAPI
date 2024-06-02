@@ -1,5 +1,6 @@
 <?php
 use  App\Http\Controllers\FeedbackController;
+use  App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -9,5 +10,7 @@ Route::get('/user', function (Request $request) {
 
 Route::post('/feedback',[FeedbackController::class,'feedback']);
 Route::get('/feedback/all',[FeedbackController::class,'show']);
-Route::post('/product',[FeedbackController::class,'saveProduct']);
-Route::get('/product/all',[FeedbackController::class,'showProduct']);
+
+Route::resource('products', ProductController::class)->except(['update']);
+Route::post('products/{product}', [ProductController::class, 'update'])->name('products.update');
+
